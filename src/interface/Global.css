@@ -1,0 +1,15 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* S'assure que le corps occupe toute la hauteur */
+    overflow-y: auto; /* Active le défilement vertical */
+    scroll-behavior: smooth; /* Défilement fluide */
+  }
+  
+  #root {
+    height: 100%; /* Garantit que l'application occupe toute la hauteur */
+  }
+
+  html {
+    scroll-behavior: smooth; /* Défilement fluide sur toutes les pages */
+  }

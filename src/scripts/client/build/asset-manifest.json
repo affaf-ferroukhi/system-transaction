@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.dc90d32b.css",
+    "main.js": "/static/js/main.be43d0dc.js",
+    "static/media/background.jpg": "/static/media/background.3e032eaa439c1518f264.jpg",
+    "static/media/cpa-logo1.png": "/static/media/cpa-logo1.cfe3721b6da93cda0e8d.png",
+    "index.html": "/index.html",
+    "main.dc90d32b.css.map": "/static/css/main.dc90d32b.css.map",
+    "main.be43d0dc.js.map": "/static/js/main.be43d0dc.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.dc90d32b.css",
+    "static/js/main.be43d0dc.js"
+  ]
+}
