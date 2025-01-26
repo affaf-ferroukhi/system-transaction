@@ -2,6 +2,7 @@ import React, { useState , useEffect } from "react";
 import { useNavigate , useLocation } from "react-router-dom";
 import axios from "axios";
 import logo from '../../assets/cpa-logo1.png';
+import logo1 from '../../assets/cpa-logo2.png'
 import SubscriptionModal from "./SubscriptionModal";
 import {
   Box,
@@ -14,16 +15,7 @@ import {
   Typography,
   Grid,
   Checkbox,
-  FormControlLabel,
-  Table,
-  TableCell,
-  TableRow, 
-  TableBody,
-  TableHead,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
+  FormControlLabel
 } from "@mui/material";
 
 const LaunchOrder = ( { addOrder , updateOrder ,orders }) => {
@@ -56,7 +48,6 @@ const LaunchOrder = ( { addOrder , updateOrder ,orders }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [existingOrder, setExistingOrder] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     if (location.state?.orderToEdit) {
@@ -90,7 +81,7 @@ const LaunchOrder = ( { addOrder , updateOrder ,orders }) => {
     if (formData.orderId) {
       updateOrder(formData); // Mettre à jour l'ordre existant
     } else {
-    const newOrder = { ...formData, dateTime, orderId };
+    //const newOrder = { ...formData, dateTime, orderId };
     addOrder({ ...formData, dateTime, orderId }); // Enregistre l'ordre 
     }
     navigate("/dashboard"); // Redirige vers le tableau de bord
@@ -99,14 +90,91 @@ const LaunchOrder = ( { addOrder , updateOrder ,orders }) => {
    
 
     try {
-      const response = await axios.post("http://localhost:3000/api/orders", newOrder);
-      console.log("Ordre ajouté avec succès :", newOrder);
+       await axios.post("http://localhost:3000/api/orders", newOrder);
+      //console.log("Ordre ajouté avec succès :", newOrder);
       addOrder(newOrder); // Ajoute à l'état des ordres
       navigate("/dashboard"); // Redirige vers le tableau de bord
     } catch (error) {
       console.error("Erreur lors de la soumission de l'ordre", error);
     }
   };
+
+  const handlePrint = () => {
+    //const printContent = document.getElementById("print-section");
+    const newWindow = window.open();
+    newWindow.document.write(`
+      <html>
+        <head>
+          <title>Impression des informations</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .print-container { margin-bottom: 20px; }
+            h2 { color: #2C3E50; }
+            .field { margin-bottom: 10px; }
+            .field label { font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <div class="print-container">
+           <div class="text-center">
+            <img src={logo1} alt="Logo" style={{ width: '250px'}} />
+            <h2>CREDIT POPULAIRE D'ALGERIE</h2>
+            <h4>T.C.C-agrément COSOB n°15/ 2004 du 26 février 2004</h4>
+            <h4>I.O.B-agrément COSOB n°15/ 2004 du 03 octobre 2004</h4>
+            <h4>Adresse: Résidence Chaabani Bloc A/3 Val d'Hydra,Alger</h4>
+            <h5 >Tél./Fax: (021)48.35.69/(021)60.44.33</h5>
+           </div>
+           <div class='text-right'> 
+            <div class="field"><label>Agence : </label>${formData.agencyNumber}</div>
+            <h3>Code  : .............</h3>
+            <div class="field"><label>N° d'ordre : </label>${formData.orderId}</div>
+            <div class="field"><label>ORDRE D' </label>${formData.orderType}</div>
+           </div>
+            <div class="field"><label>N° duCompte Titres: </label>${formData.orderId}</div>
+            <div class="field"><label>je soussigné(e) nom et prénom: </label>${formData.firstName} ${formData.lastName} </div>
+            <div class="field"><label>CIN/PCN° </label>${formData.idCardNumber}<label>délivrè le </label><label>à: </label></div>
+            <div class="field"><label>Adresse: </label>${formData.Adress}</div>
+            <div class="field"><label>Agissant pour le compte de M: </label>${formData.city}</div>
+            <div class="field"><label>Donne par le présent Ordre d': </label>${formData.orderType}</div>
+            <div class="field">
+            <table style= "width=100%"> 
+            <tr> 
+            <th> Valeur </th>
+            <th> Quantité </th>
+            <th> Numéro de Certificat </th>
+            <th> Numéro d'ordre  </th>
+            <th> Cours limités </th>
+            </tr>
+            <tr> 
+            <th> ${formData.actionValue} </th>
+            <th> ${formData.actionQuantity} </th>
+            <th> ${formData.certificateNumber} </th>
+            <th> ${formData.orderId}  </th>
+            <th> ${formData.maxPrice} </th>
+            </tr>
+            </table>
+            </div>
+            <div class="field"><label>validité de l'ordre: </label></div>
+            <div class="field"><label>1- jour: </label></div>
+            <div class="field"><label>2-Du:  </label> ${formData.Date} <label>au:  </label> ${formData.validity}<label>(maximum 30 jours)</label> </div>
+            <div class="field"><label>Mode de livraison des titres: </label></div>
+            <div class="field"><label>à conserver auprés de mon Teneur de Compte Conservateur de Titres </label></div>
+            <div class="field"><label>Montant du versement: </label></div>
+            <div class="field"><label>Mode de paiement: </label></div>
+            <div class="field"><label>Mode d'encaissement: </label></div>
+            <div class="field"><label>Numéro du repére attestant la constitution de la provision espéces por l'achat: </label></div>
+            <div class="field"><label>Fait à: ...............</label> <label>le,: </label>${formData.Date}</div>
+            <div class="field"><label>Signature du Client </label></div>
+            <div class="field"><label> Signature et Cachet de l'Agence </label></div>
+            <div class="field"><label> Signature et Cachet du Teneur de Compte Conservateur de Titres </label></div>
+          </div>
+        </body>
+      </html>
+    `);
+    newWindow.document.close();
+    newWindow.print();
+  };
+
   const [role, setRole] = useState("");
 
   const handleRoleChange = (event) => {
@@ -510,6 +578,16 @@ const LaunchOrder = ( { addOrder , updateOrder ,orders }) => {
       >
         {formData.orderId ? "Mettre à jour l'ordre" : "Ajouter un ordre"}
       </Button>
+
+      <Button
+          variant="contained"
+          color="secondary"
+          fullWidth
+          sx={{ mt: 2 }}
+          onClick={handlePrint}
+        >
+          Imprimer les informations
+        </Button>
     </Box>
 
     <SubscriptionModal

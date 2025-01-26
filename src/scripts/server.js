@@ -11,6 +11,7 @@ const orderBook = require('../routes/orderBooks');
 const stockTitleRoutes = require('../routes/stockTitles');
 const accountRoutes = require('../routes/accounts');
 //const OrderBooks  = require("../interface/tcc/OrderBooks");
+const cors = require('cors');
 
 
 const app = express();
@@ -19,12 +20,18 @@ connectDB();
 // Middleware
 app.use(express.json());
 // Routes
+app.use(cors());
 app.use("/api/orders", orderRoutes); // Lier la route à "/api/orders"
 app.use('/api/auth', authRoutes);
 app.use('/api/stockTitles', stockTitleRoutes); // Routes pour le stock titre
 app.use('/api/accounts', accountRoutes); // Routes pour les comptes titres
 app.use('/api/orderBooks', orderBook); // Routes pour le stock titre
-
+app.get('/agentsession', (req, res) => {
+  res.status(200).json({ message: 'Bienvenue, agent', sessions: [] });
+});
+app.use('/ws', (req, res) => {
+  res.status(404).send('WebSocket désactivé');
+});
 
 const clientBuildPath = path.join(__dirname, 'client', 'build');
 //app.use(express.static(clientBuildPath));
@@ -33,22 +40,24 @@ const clientBuildPath = path.join(__dirname, 'client', 'build');
   res.sendFile(path.join(clientBuildPath, 'index.html'));
 });*/
 
+app.post('/api/auth/login', (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Username et password requis' });
+  }
+
+  if (username === 'admin' && password === 'admin123') {
+    return res.status(200).json({ message: 'Connexion réussie' });
+  }
+
+  return res.status(401).json({ message: 'Identifiants incorrects' });
+});
 
 app.get("/", (req, res) => {
   res.status(200).send("Le serveur fonctionne !");
 });
 
-// Modèle pour la session de bourse
-const sessionSchema = new mongoose.Schema({
-  date: { type: String, required: true },
-  openingPrice: { type: Number, required: true },
-  closingPrice: { type: Number },
-  status: { type: String, enum: ['open', 'closed'], required: true },
-});
-
-module.exports = Order;
-
-const Session = mongoose.model('Session', sessionSchema);
 // Routes API
 /*router.post("/", async (req, res) => {
   try {
@@ -69,7 +78,6 @@ const Session = mongoose.model('Session', sessionSchema);
     res.status(500).json({ message: "Erreur lors de la récupération des ordres" });
   }
 });*/
-
 
 
 /*app.post("/api/orders", async (req, res) => {
@@ -136,9 +144,9 @@ app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
 });
 
-app.use('/api/stockTitles', stockTitleRoutes); // Routes pour le stock titre
-app.use('/api/accounts', accountRoutes); // Routes pour les comptes titres
-app.use('/api/orderBooks', orderBook); // Routes pour le stock titre
+//app.use('/api/stockTitles', stockTitleRoutes); // Routes pour le stock titre
+//app.use('/api/accounts', accountRoutes); // Routes pour les comptes titres
+//app.use('/api/orderBooks', orderBook); // Routes pour le stock titre
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 3000;

@@ -55,7 +55,7 @@ function Dashboard({orders = [],rejectOrder, setOrders} , children  ) {
     useEffect(() => {
       const fetchOrders = async () => {
         try {
-          const response = await axios.get("http://localhost:5000/api/orders");
+          const response = await axios.get("http://localhost:3000/api/orders");
           setOrders(response.data);
         } catch (error) {
           console.error("Erreur lors de la récupération des ordres :", error);

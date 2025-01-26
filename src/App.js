@@ -33,6 +33,8 @@ const App = () => {
     );
   };
   const userRole = localStorage.getItem("role");
+  console.log("isAuthenticated:", isAuthenticated);
+  console.log("userRole:", userRole);
 
   return (
     <Router> 
@@ -44,9 +46,15 @@ const App = () => {
           ) : (
               <Navigate to="/" replace />
             )} />
-         <Route path="/AgentSession" element={ isAuthenticated && userRole === "Agent" ? ( <AgentSession />
+         <Route path="/agentsession" element={ isAuthenticated && userRole === "Agent" ? ( <AgentSession />
   ) : (
     <Navigate to="/" replace />
+    
+  )} />
+  <Route path="/TccDashboard" element={ isAuthenticated && userRole === "TCC" ? ( <AgentSession />
+  ) : (
+    <Navigate to="/" replace />
+    
   )}
 />
     </Routes>

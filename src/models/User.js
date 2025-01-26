@@ -12,11 +12,18 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['Agent', 'Admin', 'TCC'], // Liste des rôles possibles
-        required: true,
-        default: 'Agent', // Rôle par défaut
+        enum: ['Agent', 'Admin', 'TCC'], 
+        required: true, 
     },
 });
+
+userSchema.pre('save', function(next) {
+    // Optionnel : validation supplémentaire avant de sauvegarder
+    if (!['Admin', 'Agent', 'TCC'].includes(this.role)) {
+      return next(new Error('Le rôle est invalide.'));
+    }
+    next();
+  });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

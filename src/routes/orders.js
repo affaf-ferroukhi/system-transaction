@@ -4,12 +4,12 @@ const Order = require("../models/Order"); // Modèle Mongoose
 const verifyRole = require('../middlewares/authMiddleware');
 
 // Route accessible uniquement par les agents
-router.post('/create', verifyRole('Agent'), (req, res) => {
+router.post('/create', verifyRole('Admin'), (req, res) => {
   res.send('Création d’un ordre');
 });
 
 // Route accessible uniquement par les admins
-router.get('/admin', verifyRole('Admin'), (req, res) => {
+router.get('/agent', verifyRole('Agent'), (req, res) => {
   res.send('Gestion des utilisateurs');
 });
 

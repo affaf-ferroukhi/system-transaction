@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import './Auth.css';
 import logo from '../assets/cpa-logo1.png';
 import backg from '../assets/123.jpg';
@@ -10,11 +10,9 @@ import {
   MDBCard,
   MDBCardBody,
   MDBInput,
-  MDBIcon,
   MDBRow,
-  MDBCol,
-  MDBCheckbox,
-  MDBAlert
+  MDBCol
+  
 }
 from 'mdb-react-ui-kit';
 
@@ -45,12 +43,9 @@ function Auth() {
     console.log(data);
   };*/
 
-  
-
 /*app.listen(PORT, () => {
   console.log(`Serveur en cours d'exécution sur http://localhost:${PORT}`);
 });*/
-
 
   /*const handleLogin = async (e) => {
     e.preventDefault();
@@ -85,6 +80,13 @@ function Auth() {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    //const [isAuthenticated, setIsAuthenticated] = useState(false);
+    //const [userRole, setUserRole] = useState('');
+
+    /*useEffect(() => {
+      setIsAuthenticated(localStorage.getItem("auth") === "true");
+      setUserRole(localStorage.getItem("role"));
+    }, []);*/
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -96,33 +98,44 @@ function Auth() {
             const response = await axios.post("http://localhost:3000/api/auth/login", {
                 username,
                 password,
-            });
-
+            })
+          
+            console.log('Connexion réussie:', response.data);
+             
+            console.log("Données envoyées :", { username, password });
             const { role, token } = response.data;
 
             localStorage.setItem("auth", "true");
             localStorage.setItem("role", role);
             localStorage.setItem("token", token);
+           
+            setSuccess('Connexion réussie !');
 
+            console.log('Redirection en cours...');
             if (role === "Agent") {
+              console.log("Redirection vers /agentsession");
                 navigate("/agentsession");
                 setSuccess('Connexion réussie !');
             } else if (role === "Admin") {
-                navigate("/admin");
+                navigate("/dashboard");
                 setSuccess('Connexion réussie !');
             } else if (role === "TCC") {
-                navigate("/dashboard");
+                navigate("/tccdashboard");
                 setSuccess('Connexion réussie !');
             } else {
                 setError("Rôle inconnu");
             }
+
+            
         } catch (err) {
-            console.error(err);
-            setError("Erreur de connexion");
-        }
+          console.error('Erreur capturée :', err.response || err.message);
+          const errorMessage = err.response?.data?.message || "Une erreur inconnue est survenue.";
+          setError("Erreur de connexion : " + errorMessage);
+          //console.log(err)
+        } finally {
+          setLoading(false);
+      }
       
-     
-        console.log("Bouton Login cliqué !");
     };
   
   /*return (
@@ -181,7 +194,7 @@ function Auth() {
                  </div>}
                  <form onSubmit={handleLogin}>
 
-              <MDBInput wrapperClass='mb-3' id='user' type='user' value={username}  placeholder="Enter Username "  onChange={(e) => setUsername(e.target.value)}
+              <MDBInput wrapperClass='mb-3' id='user' type='text' value={username}  placeholder="Enter Username "  onChange={(e) => setUsername(e.target.value)}
               required/>
               
               <MDBInput wrapperClass='mb-3' id='password' type='password' value={password}  placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)}
@@ -196,8 +209,8 @@ function Auth() {
         </MDBCol>
 
         <MDBCol col='6'>
-          <img src={backg} class="w-100 rounded-4 shadow-4"
-            alt="Background" fluid  style={{ height: '100%', objectFit: 'cover' }}/>
+          <img src={backg} className="w-100 rounded-4 shadow-4"
+            alt="Background" fluid="true"  style={{ height: '100%', objectFit: 'cover' }}/>
         </MDBCol>
 
       </MDBRow>

@@ -3,8 +3,6 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const connectDB = require("../db");
 
-// Connexion à MongoDB
-connectDB();
 
 const createUser = async () => {
     const username = 'admin';
@@ -12,7 +10,8 @@ const createUser = async () => {
     const role = 'Admin';
 
     try {
-        // Vérifiez si un utilisateur avec ce nom d'utilisateur existe déjà
+        connectDB();
+
         const existingUser = await User.findOne({ username });
         if (existingUser) {
             console.log('Utilisateur déjà existant');
@@ -30,15 +29,16 @@ const createUser = async () => {
 
     await user.save();
     console.log('Utilisateur créé avec succès');
-    
+    mongoose.connection.close();
 } catch (err) {
     console.error('Erreur lors de la création de l’utilisateur :', err);
-} finally {
     mongoose.connection.close();
-}
+} /*finally {
+    mongoose.connection.close();
+}*/
 };
 
 createUser().catch((err) => {
     console.error('Erreur lors de la création de l’utilisateur :', err);
-    mongoose.connection.close();
+    //mongoose.connection.close();
 });

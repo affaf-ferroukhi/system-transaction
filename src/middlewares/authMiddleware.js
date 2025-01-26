@@ -19,6 +19,9 @@ const verifyRole = (requiredRole) => {
             return res.status(403).json({ message: 'Token invalide' });
         }
     };
+    app.get('/agentsession', verifyToken, (req, res) => {
+        res.status(200).send(`Bienvenue ${req.user.role}`);
+    });
 };
 
 module.exports = verifyRole;
